@@ -9,7 +9,9 @@ export default function TaskDetails() {
 
     const location = useLocation();
     const { task } = location.state;
-    const { title, description, dueDate, priority, categories } = task;
+    const { title, description, dueDate, priority, categories, completed } =
+        task;
+    const [completeStatus, setCompleteStatus] = useState(completed);
     //     {
     //     "_id": "654c89b5ccd284640d863930",
     //     "title": "abdfds",
@@ -47,6 +49,7 @@ export default function TaskDetails() {
             });
 
             console.log(response.data);
+            setCompleteStatus(true);
         } catch (err) {
             //
             console.log(err);
@@ -83,15 +86,19 @@ export default function TaskDetails() {
                 </p>
                 <p>
                     <b>Due Date: </b>
-                    {formatDateAndTime(task.dueDate).date}
+                    {formatDateAndTime(dueDate).date}
                 </p>
                 <p>
                     <b>Priority</b>
-                    {task.priority}
+                    {priority}
                 </p>
                 <p>
                     <b>Categories: </b>
-                    {task.categories?.map((category) => category).join(", ")}
+                    {categories?.map((category) => category).join(", ")}
+                </p>
+                <p>
+                    <b>Status: </b>
+                    {completeStatus ? "Done" : "Pending..."}
                 </p>
             </div>
 
@@ -106,8 +113,12 @@ export default function TaskDetails() {
                 >
                     Edit Details
                 </Link>
-                <button className="btn" onClick={markAsDone}>
-                    Mark As Done
+                <button
+                    className="btn"
+                    onClick={markAsDone}
+                    disabled={completeStatus}
+                >
+                    {completeStatus ? "Already Done" : "Mark As Done"}
                 </button>
                 <button onClick={deleteTask} className="btn">
                     Delete

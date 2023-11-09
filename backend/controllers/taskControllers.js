@@ -20,36 +20,6 @@ const createTask = async (req, res) => {
     }
 };
 
-const filterTaskPriority = async (req, res) => {
-    const { priority } = req.body;
-
-    try {
-        const task = await Task.find({
-            priority: priority,
-        });
-        res.status(200).json({ task });
-    } catch (error) {
-        console.log(error.message);
-        res.status(400).json({ error: error.message });
-    }
-};
-
-const filterTaskDueDate = async (req, res) => {
-    // const { due_date } = req.body;
-    const currentDate = new Date();
-    console.log(currentDate);
-
-    try {
-        const task = await Task.find({
-            dueDate: { $gte: currentDate },
-        }).sort({ dueDate: 1 });
-        res.status(200).json({ task });
-    } catch (error) {
-        console.log(error.message);
-        res.status(400).json({ error: error.message });
-    }
-};
-
 const getTasks = async (req, res) => {
     try {
         const task = await Task.find();
@@ -91,31 +61,6 @@ const updateTask = async (req, res) => {
     }
 };
 
-const getTaskByDate = async (req, res) => {
-    const { due_date } = req.body;
-
-    try {
-        const task = await Task.find({
-            dueDate: due_date,
-        });
-        res.status(200).json({ task });
-    } catch (error) {
-        console.log(error.message);
-        res.status(400).json({ error: error.message });
-    }
-};
-
-const sortTaskByPriority = async (req, res) => {
-    try {
-        const task = await Task.find();
-        const tasks = task.sort((a, b) => a.priority - b.priority);
-        res.status(200).json({ tasks });
-    } catch (error) {
-        console.log(error.message);
-        res.status(400).json({ error: error.message });
-    }
-};
-
 const deleteTask = async (req, res) => {
     const { task_id } = req.body;
     console.log(req.body);
@@ -130,11 +75,7 @@ const deleteTask = async (req, res) => {
 
 module.exports = {
     createTask,
-    filterTaskPriority,
-    filterTaskDueDate,
     getTasks,
     updateTask,
-    getTaskByDate,
-    sortTaskByPriority,
     deleteTask,
 };

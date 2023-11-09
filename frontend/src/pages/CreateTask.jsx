@@ -77,7 +77,13 @@ export default function CreateTask() {
                         type="text"
                         name="title"
                         id="title"
-                        value={editMode && title === false ? task.title : title}
+                        value={
+                            editMode && title === false
+                                ? task.title
+                                : title === false
+                                ? ""
+                                : title
+                        }
                         onChange={(e) => {
                             setTitle(e.target.value);
                         }}
@@ -94,6 +100,8 @@ export default function CreateTask() {
                         value={
                             editMode && description === false
                                 ? task.description
+                                : description === false
+                                ? ""
                                 : description
                         }
                         onChange={(e) => {
@@ -114,6 +122,8 @@ export default function CreateTask() {
                                 ? task.categories
                                       ?.map((category) => category)
                                       .join(", ")
+                                : category === false
+                                ? ""
                                 : category
                         }
                         onChange={(e) => {
@@ -130,6 +140,8 @@ export default function CreateTask() {
                         value={
                             editMode && dueDate === false
                                 ? formatDateAndTime(task.dueDate).date
+                                : dueDate === false
+                                ? ""
                                 : dueDate
                         }
                         onChange={(e) => {
@@ -146,6 +158,8 @@ export default function CreateTask() {
                         value={
                             editMode && priority === false
                                 ? task.priority
+                                : priority === false
+                                ? ""
                                 : priority
                         }
                         onChange={(e) => {
