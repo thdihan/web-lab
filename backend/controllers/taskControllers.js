@@ -1,139 +1,140 @@
 const Task = require("../model/taskModel");
 
 const createTask = async (req, res) => {
-  const { title, description, due_date, priority, categories } = req.body;
-  if (!title || !description || !due_date || !priority) {
-    throw Error("Please fill up the fields");
-  }
-  try {
-    const task = await Task.create({
-      title,
-      description,
-      dueDate: new Date(due_date),
-      priority,
-      categories: categories.split(","),
-    });
-    res.status(200).json({ task });
-  } catch (error) {
-    console.log(error.message);
-    res.status(400).json({ error: error.message });
-  }
+    const { title, description, due_date, priority, categories } = req.body;
+    if (!title || !description || !due_date || !priority) {
+        throw Error("Please fill up the fields");
+    }
+    try {
+        const task = await Task.create({
+            title,
+            description,
+            dueDate: new Date(due_date),
+            priority,
+            categories: categories.split(","),
+        });
+        res.status(200).json({ task });
+    } catch (error) {
+        console.log(error.message);
+        res.status(400).json({ error: error.message });
+    }
 };
 
 const filterTaskPriority = async (req, res) => {
-  const { priority } = req.body;
+    const { priority } = req.body;
 
-  try {
-    const task = await Task.find({
-      priority: priority,
-    });
-    res.status(200).json({ task });
-  } catch (error) {
-    console.log(error.message);
-    res.status(400).json({ error: error.message });
-  }
+    try {
+        const task = await Task.find({
+            priority: priority,
+        });
+        res.status(200).json({ task });
+    } catch (error) {
+        console.log(error.message);
+        res.status(400).json({ error: error.message });
+    }
 };
 
 const filterTaskDueDate = async (req, res) => {
-  // const { due_date } = req.body;
-  const currentDate = new Date();
-  console.log(currentDate);
+    // const { due_date } = req.body;
+    const currentDate = new Date();
+    console.log(currentDate);
 
-  try {
-    const task = await Task.find({
-      dueDate: { $gte: currentDate },
-    }).sort({ dueDate: 1 });
-    res.status(200).json({ task });
-  } catch (error) {
-    console.log(error.message);
-    res.status(400).json({ error: error.message });
-  }
+    try {
+        const task = await Task.find({
+            dueDate: { $gte: currentDate },
+        }).sort({ dueDate: 1 });
+        res.status(200).json({ task });
+    } catch (error) {
+        console.log(error.message);
+        res.status(400).json({ error: error.message });
+    }
 };
 
 const getTasks = async (req, res) => {
-  try {
-    const task = await Task.find();
-    res.status(200).json({ task });
-  } catch (error) {
-    console.log(error.message);
-    res.status(400).json({ error: error.message });
-  }
+    try {
+        const task = await Task.find();
+        res.status(200).json({ task });
+    } catch (error) {
+        console.log(error.message);
+        res.status(400).json({ error: error.message });
+    }
 };
 
 const updateTask = async (req, res) => {
-  const {
-    title,
-    description,
-    due_date,
-    priority,
-    completed,
-    categories,
-    task_id,
-  } = req.body;
-  const complete = completed ? true : false;
-  try {
-    const task = await Task.findById(task_id);
-    if (!task) {
-      return res.status(404).json({ error: "Task not found" });
-    }
-    task.completed = complete;
-    task.title = title;
-    task.description = description;
-    task.dueDate = new Date(due_date);
-    task.priority = priority;
-    task.categories = categories.split(",");
+    const {
+        title,
+        description,
+        due_date,
+        priority,
+        completed,
+        categories,
+        task_id,
+    } = req.body;
+    const complete = completed ? true : false;
+    try {
+        const task = await Task.findById(task_id);
+        if (!task) {
+            return res.status(404).json({ error: "Task not found" });
+        }
+        task.completed = complete;
+        task.title = title;
+        task.description = description;
+        task.dueDate = new Date(due_date);
+        task.priority = priority;
+        task.categories = categories.split(",");
 
-    await task.save();
-    res.status(200).json({ task });
-  } catch (error) {
-    console.log(error.message);
-    res.status(400).json({ error: error.message });
-  }
+        await task.save();
+        res.status(200).json({ task });
+    } catch (error) {
+        console.log(error.message);
+        res.status(400).json({ error: error.message });
+    }
 };
 
 const getTaskByDate = async (req, res) => {
-  const { due_date } = req.body;
+    const { due_date } = req.body;
 
-  try {
-    const task = await Task.find({
-      dueDate: due_date,
-    });
-    res.status(200).json({ task });
-  } catch (error) {
-    console.log(error.message);
-    res.status(400).json({ error: error.message });
-  }
+    try {
+        const task = await Task.find({
+            dueDate: due_date,
+        });
+        res.status(200).json({ task });
+    } catch (error) {
+        console.log(error.message);
+        res.status(400).json({ error: error.message });
+    }
 };
 
 const sortTaskByPriority = async (req, res) => {
-  try {
-    const task = await Task.find();
-    const tasks = task.sort((a, b) => a.priority - b.priority);
-    res.status(200).json({ tasks });
-  } catch (error) {
-    console.log(error.message);
-    res.status(400).json({ error: error.message });
-  }
+    try {
+        const task = await Task.find();
+        const tasks = task.sort((a, b) => a.priority - b.priority);
+        res.status(200).json({ tasks });
+    } catch (error) {
+        console.log(error.message);
+        res.status(400).json({ error: error.message });
+    }
 };
 
 const deleteTask = async (req, res) => {
-  const { task_id } = req.body;
-  try {
-    const task = await Task.deleteOne({ _id: task_id });
-    res.status(200).json({ task });
-  } catch (error) {
-    console.log(error.message);
-    res.status(400).json({ error: error.message });
-  }
+    const { task_id } = req.body;
+    console.log(req.body);
+    try {
+        const task = await Task.deleteOne({ _id: task_id });
+        res.status(200).json({ task });
+    } catch (error) {
+        console.log(error.message);
+        res.status(400).json({ error: error.message });
+    }
 };
 
 module.exports = {
-  createTask,
-  filterTaskPriority,
-  filterTaskDueDate,
-  getTasks,
-  updateTask,
-  getTaskByDate,
-  sortTaskByPriority,
-  deleteTask,
+    createTask,
+    filterTaskPriority,
+    filterTaskDueDate,
+    getTasks,
+    updateTask,
+    getTaskByDate,
+    sortTaskByPriority,
+    deleteTask,
 };
