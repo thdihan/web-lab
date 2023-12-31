@@ -5,6 +5,7 @@ import { useLocation } from "react-router-dom";
 import UserApi from "../api/UserApi";
 import { formatDateAndTime } from "../utilities/formatDate";
 import { overDueCheck } from "../utilities/overdueCheck";
+import { useAuthContext } from "../hooks/useAuthContext";
 export default function TaskDetails() {
     const navigate = useNavigate();
 
@@ -13,19 +14,7 @@ export default function TaskDetails() {
     const { title, description, dueDate, priority, categories, completed } =
         task;
     const [completeStatus, setCompleteStatus] = useState(completed);
-    //     {
-    //     "_id": "654c89b5ccd284640d863930",
-    //     "title": "abdfds",
-    //     "description": "dsfsdfsd",
-    //     "dueDate": "2023-11-10T00:00:00.000Z",
-    //     "priority": 2,
-    //     "completed": false,
-    //     "categories": [
-    //         "sdf",
-    //         "vdfgd"
-    //     ],
-    //     "__v": 0
-    // }
+    const { user } = useAuthContext();
     console.log("TASK DETAILS :", task);
 
     async function markAsDone() {
@@ -45,6 +34,7 @@ export default function TaskDetails() {
             //
             const response = await UserApi.put("/update-task", tempObj, {
                 headers: {
+                    Authorization: `Bearer ${user?.token}`,
                     "Content-Type": "application/json",
                 },
             });
@@ -64,6 +54,7 @@ export default function TaskDetails() {
                 { task_id: task._id },
                 {
                     headers: {
+                        Authorization: `Bearer ${user?.token}`,
                         "Content-Type": "application/json",
                     },
                 }

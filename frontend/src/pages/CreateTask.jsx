@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import UserApi from "../api/UserApi";
 import { useState } from "react";
 import { formatDateAndTime } from "../utilities/formatDate";
+import { useAuthContext } from "../hooks/useAuthContext";
 export default function CreateTask() {
     const location = useLocation();
     const { editMode } = location.state || false;
@@ -14,15 +15,19 @@ export default function CreateTask() {
     const [description, setDescription] = useState(false);
     const [category, setCategory] = useState(false);
     const [dueDate, setDueDate] = useState(false);
+    const [dueTime, setDueTime] = useState(false); // [date, time
     const [priority, setPriority] = useState(false);
 
+    const { user } = useAuthContext();
     async function handleAddTask(e) {
         e.preventDefault();
         const formData = new FormData(e.target);
         const formDataObject = Object.fromEntries(formData);
         console.log("Form Data Example : ", formDataObject);
         formDataObject["priority"] = parseInt(formDataObject["priority"]);
-
+        formDataObject[
+            "due_date"
+        ] = `${formDataObject["due_date"]}T${formDataObject["due_time"]}`;
         try {
             //
             const response = await UserApi.post(
@@ -30,6 +35,7 @@ export default function CreateTask() {
                 formDataObject,
                 {
                     headers: {
+                        Authorization: `Bearer ${user?.token}`,
                         "Content-Type": "application/json",
                     },
                 }
@@ -149,6 +155,24 @@ export default function CreateTask() {
                         }
                         onChange={(e) => {
                             setDueDate(e.target.value);
+                        }}
+                    />
+                </div>
+                <div>
+                    <label htmlFor="time">Deadline Time</label>
+                    <input
+                        type="time"
+                        name="due_time"
+                        id=""
+                        value={
+                            editMode && dueDate === false
+                                ? formatDateAndTime(task.dueDate).time
+                                : dueTime === false
+                                ? ""
+                                : dueTime
+                        }
+                        onChange={(e) => {
+                            setDueTime(e.target.value);
                         }}
                     />
                 </div>

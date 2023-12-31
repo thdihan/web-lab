@@ -17,6 +17,7 @@ export default function Home() {
     const [storeTaskList, setStoreTaskList] = useState([]);
 
     const [searchBox, setSearchBox] = useState("");
+    const { user } = useAuthContext();
 
     const priorityObject = {
         1: "High",
@@ -97,6 +98,7 @@ export default function Home() {
                 setError(false);
                 const response = await UserApi.get("/get-tasks", {
                     headers: {
+                        Authorization: `Bearer ${user?.token}`,
                         "Content-Type": "application/json",
                     },
                 });
@@ -110,10 +112,12 @@ export default function Home() {
                 setError(error);
             }
         }
-        getTaskList();
-    }, []);
 
-    const { user } = useAuthContext();
+        if (user) {
+            getTaskList();
+        }
+    }, [user]);
+
     return (
         <div>
             {user && (

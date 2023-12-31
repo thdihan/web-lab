@@ -6,7 +6,7 @@ const bcrypt = require("bcrypt");
 const secret = "mysecret123";
 
 const generateToken = (_id) => {
-    return jwt.sign({ _id }, secret, { expiresIn: "30d" });
+    return jwt.sign({ _id }, process.env.JWT_SECRET, { expiresIn: "30d" });
 };
 
 const signup = async (req, res) => {
