@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import style from "../style/Home.module.css";
+import style from "../styles/Home.module.css";
 import { Link } from "react-router-dom";
 import UserApi from "../api/UserApi";
 import { formatDateAndTime } from "../utilities/formatDate";
+import { overDueCheck } from "../utilities/overdueCheck";
 export default function Home() {
     const [priority, setPriority] = useState();
     const [due_date, setDueDate] = useState();
@@ -148,7 +149,7 @@ export default function Home() {
                             }}
                         />
                     </div>
-                    <div>
+                    <div className={style["filter-button"]}>
                         <input
                             type="button"
                             className="btn"
@@ -161,7 +162,7 @@ export default function Home() {
                             }}
                         />
                     </div>
-                    <div>
+                    <div className={style["filter-button"]}>
                         <input
                             type="button"
                             className="btn"
@@ -191,13 +192,22 @@ export default function Home() {
             </div>
 
             <div className={style["taskbox"]}>
-                <h1>Task List</h1>
+                <h2>Task List</h2>
 
                 {taskList &&
                     !loading &&
                     !error &&
                     taskList.map((task, index) => (
-                        <div key={index} className={style["singleBox"]}>
+                        <div
+                            key={index}
+                            className={`${style["singleBox"]} ${
+                                overDueCheck(task.dueDate)
+                                    ? style["red"]
+                                    : task.completed
+                                    ? style["green"]
+                                    : style["yellow"]
+                            }`}
+                        >
                             <h3>{task.title}</h3>
                             <div className={style["task-info"]}>
                                 <p>
@@ -213,6 +223,15 @@ export default function Home() {
                                     {task.categories
                                         ?.map((category) => category)
                                         .join(", ")}
+                                </p>
+                                <p>
+                                    <b>Status: </b>
+                                    {task.completed
+                                        ? "Done"
+                                        : "Pending..."}{" "}
+                                    {overDueCheck(task.dueDate) && (
+                                        <span>(Due Time Over)</span>
+                                    )}
                                 </p>
                             </div>
                             <Link to="/task-details" state={{ task }}>

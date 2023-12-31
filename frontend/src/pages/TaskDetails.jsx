@@ -1,9 +1,10 @@
 import { useState } from "react";
-import style from "../style/TaskDetails.module.css";
+import style from "../styles/TaskDetails.module.css";
 import { Link, useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import UserApi from "../api/UserApi";
 import { formatDateAndTime } from "../utilities/formatDate";
+import { overDueCheck } from "../utilities/overdueCheck";
 export default function TaskDetails() {
     const navigate = useNavigate();
 
@@ -76,21 +77,22 @@ export default function TaskDetails() {
         }
     }
 
+    const priorityObject = {
+        1: "High",
+        2: "Medium",
+        3: "Low",
+    };
     return (
         <>
             <div className={style["task-details-page"]}>
                 <h2>{title}</h2>
                 <p>
-                    <b>Task Description: </b>
-                    {description}
-                </p>
-                <p>
                     <b>Due Date: </b>
                     {formatDateAndTime(dueDate).date}
                 </p>
                 <p>
-                    <b>Priority</b>
-                    {priority}
+                    <b>Priority: </b>
+                    {priorityObject[priority]}
                 </p>
                 <p>
                     <b>Categories: </b>
@@ -98,7 +100,21 @@ export default function TaskDetails() {
                 </p>
                 <p>
                     <b>Status: </b>
-                    {completeStatus ? "Done" : "Pending..."}
+                    <span
+                        className={`${style["status"]} ${
+                            overDueCheck(task.dueDate)
+                                ? style["red"]
+                                : completeStatus
+                                ? style["green"]
+                                : style["yellow"]
+                        }`}
+                    >
+                        {completeStatus ? "Done" : "Pending..."}
+                    </span>
+                </p>
+                <p>
+                    <b>Task Description: </b>
+                    {description}
                 </p>
             </div>
 
@@ -114,7 +130,7 @@ export default function TaskDetails() {
                     Edit Details
                 </Link>
                 <button
-                    className="btn"
+                    className={`btn ${completeStatus ? "disabled" : ""}`}
                     onClick={markAsDone}
                     disabled={completeStatus}
                 >

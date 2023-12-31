@@ -1,5 +1,5 @@
-import style from "../style/CreateTask.module.css";
-import { useLocation } from "react-router-dom";
+import style from "../styles/CreateTask.module.css";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import UserApi from "../api/UserApi";
 import { useState } from "react";
@@ -9,6 +9,7 @@ export default function CreateTask() {
     const { editMode } = location.state || false;
     const { task } = location.state || false;
 
+    const navigate = useNavigate();
     const [title, setTitle] = useState(false);
     const [description, setDescription] = useState(false);
     const [category, setCategory] = useState(false);
@@ -35,6 +36,7 @@ export default function CreateTask() {
             );
 
             console.log(response.data);
+            navigate("/");
         } catch (err) {
             //
             console.log(err);
@@ -58,6 +60,7 @@ export default function CreateTask() {
             });
 
             console.log(response.data);
+            navigate("/");
         } catch (err) {
             //
             console.log(err);
@@ -65,7 +68,7 @@ export default function CreateTask() {
     }
 
     return (
-        <div>
+        <div className={style["create-task"]}>
             <h2>{editMode ? `Edit Form` : `Task Creation Form`}</h2>
             <form
                 onSubmit={!editMode ? handleAddTask : handleUpdateTask}
