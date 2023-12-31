@@ -1,12 +1,14 @@
 import { useState } from "react";
 import classes from "../styles/Registration.module.css";
-import AuthApi from "../api/AuthApi";
 import { useNavigate } from "react-router-dom";
+import { useAuthContext } from "../hooks/useAuthContext";
 const Login = () => {
     const [email, setEmail] = useState("");
     const [password, setPassowrd] = useState("");
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
+
+    const { login } = useAuthContext();
 
     // Navigation
     const navigate = useNavigate();
@@ -22,11 +24,7 @@ const Login = () => {
         // TODO: Send data to backend
         try {
             setLoading(true);
-            const response = await AuthApi.post("/login", loginData, {
-                headers: {
-                    "Content-Type": "application/json",
-                },
-            });
+            const response = login(loginData);
             console.log("Response: (Login) ", response.data);
             setLoading(false);
             navigate("/");
