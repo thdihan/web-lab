@@ -7,6 +7,7 @@ import Layout from "./components/Layout";
 import Registration from "./pages/Registration";
 import Login from "./pages/Login";
 import { AuthContextProvider } from "./context/AuthContext";
+import UserProfile from "./pages/UserProfile";
 function App() {
     return (
         <AuthContextProvider>
@@ -18,6 +19,7 @@ function App() {
                         <Route path="" element={<Home />} />
                         <Route path="create-task" element={<CreateTask />} />
                         <Route path="task-details" element={<TaskDetails />} />
+                        <Route path="profile" element={<UserProfile />} />
                     </Route>
                 </Routes>
             </Router>

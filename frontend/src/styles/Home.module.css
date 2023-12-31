@@ -100,3 +100,10 @@
 .task-info p {
     margin-right: 20px;
 }
+
+.not-logged-in {
+    text-align: center;
+    margin-top: 20px;
+    background-color: #fff;
+    padding: 20px;
+}
