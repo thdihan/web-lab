@@ -1,14 +1,18 @@
 import { useState } from "react";
 import classes from "../styles/Registration.module.css";
-
+import AuthApi from "../api/AuthApi";
+import { useNavigate } from "react-router-dom";
 const Login = () => {
     const [email, setEmail] = useState("");
     const [password, setPassowrd] = useState("");
     const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
 
-    const handleLogin = (e) => {
+    // Navigation
+    const navigate = useNavigate();
+    const handleLogin = async (e) => {
         e.preventDefault();
-        console.log("Sign Up");
+        console.log("Login");
 
         const loginData = {
             email,
@@ -16,6 +20,21 @@ const Login = () => {
         };
 
         // TODO: Send data to backend
+        try {
+            setLoading(true);
+            const response = await AuthApi.post("/login", loginData, {
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+            console.log("Response: (Login) ", response.data);
+            setLoading(false);
+            navigate("/");
+        } catch (error) {
+            console.log("Error: (Login) ", error.response.data);
+            setError(error.response.data.message);
+            setLoading(false);
+        }
     };
     return (
         <div className={`${classes["Registration"]}`}>

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import classes from "../styles/Registration.module.css";
-
+import AuthApi from "../api/AuthApi";
+import { useNavigate } from "react-router-dom";
 const Registration = () => {
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
@@ -8,8 +9,12 @@ const Registration = () => {
     const [confirmPassword, setConfirmPassword] = useState("");
     const [userType, setUserType] = useState("user");
     const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
 
-    const handleSignUp = (e) => {
+    // Navigation
+    const navigate = useNavigate();
+
+    const handleSignUp = async (e) => {
         e.preventDefault();
         console.log("Sign Up");
 
@@ -26,6 +31,21 @@ const Registration = () => {
         };
 
         // TODO: Send data to backend
+        try {
+            setLoading(true);
+            const response = await AuthApi.post("/signup", signUpData, {
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+            console.log("Response: (Signup) ", response.data);
+            setLoading(false);
+            navigate("/login");
+        } catch (error) {
+            console.log("Error: (Signup) ", error.response.data);
+            setError(error.response.data.message);
+            setLoading(false);
+        }
     };
     return (
         <div className={`${classes["Registration"]}`}>
@@ -88,7 +108,12 @@ const Registration = () => {
                 <div>
                     <p style={{ color: "red", padding: "10px 0px" }}>{error}</p>
                 </div>
-                <input type="submit" value="Register" className="btn" />
+                <input
+                    type="submit"
+                    value="Register"
+                    className="btn"
+                    disabled={loading}
+                />
                 <div>
                     <p>
                         Already have an account? <a href="/login">Login</a>
